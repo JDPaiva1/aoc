@@ -1,25 +1,32 @@
 file = open('input.txt', 'r')
 content = file.read()
 
-coordinates = [0,0]
+santaPosition = [0,0]
+roboSantaPosition = [0,0]
 housesDelivered = {(0,0)}
 
-def move(direction):
+def move(direction, coordinates):
+    x, y = coordinates
     if direction == '^':
-        coordinates[1] += 1
+        y += 1
     elif direction == 'v':
-        coordinates[1] -= 1
+        y -= 1
     elif direction == '>':
-        coordinates[0] += 1
+        x += 1
     elif direction == '<':
-        coordinates[0] -= 1
+        x -= 1
+    return [x, y]
 
-def addDelivery():
+def addDelivery(coordinates):
     housesDelivered.add((coordinates[0], coordinates[1]))
 
-for direction in list(content):
-    move(direction)
-    addDelivery()
+for i, direction in enumerate(content):
+    if i % 2 == 0:
+        roboSantaPosition = move(direction, roboSantaPosition)
+        addDelivery(roboSantaPosition)
+    else:
+        santaPosition = move(direction, santaPosition)
+        addDelivery(santaPosition)
 
 file.close()
 print(len(housesDelivered))
