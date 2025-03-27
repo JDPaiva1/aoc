@@ -68,7 +68,7 @@ def processCircuit(instructions):
                 completedInstructions += 1
 
             if value is not None:
-                    newWires[providedWire] = value
+                newWires[providedWire] = value
 
         wires.update(newWires)
 
@@ -78,4 +78,10 @@ def processCircuit(instructions):
 with open("input.txt", "r") as f:
     instructions = [line.strip() for line in f]
 
-print("Part 1: Signal on wire a:", processCircuit(instructions))
+signalA = processCircuit(instructions)
+print("Part 1: Signal on wire a:", signalA)
+
+if signalA is not None:
+    wires.clear()
+    wires["b"] = signalA
+    print("Part 2: Signal on wire a (with override):", processCircuit(instructions))
