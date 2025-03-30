@@ -19,4 +19,9 @@ def lookAndSay(input):
 for i in range(0, 40):
     input = lookAndSay(input)
 
-print(len(input))
+print("First part: ", len(input))
+
+for i in range(0, 10):
+    input = lookAndSay(input)
+
+print("Second part: ", len(input))
