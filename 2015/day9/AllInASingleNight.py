@@ -20,7 +20,8 @@ def findShortestRoute(cities):
     routes = {}
     for path in list(permutations(cities)):
         routes.update(findDistance(path))
-    return sorted(routes.items(), key=lambda x: x[1])[0]
+    routes = sorted(routes.items(), key=lambda x: x[1])
+    return routes[0], routes[-1]
 
 def getDistancesBetweenLocations(line):
     line = line.strip()
