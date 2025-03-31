@@ -50,3 +50,4 @@ def findPassword(password):
             return password
 
 print(findPassword('vzbxkghb'))
+print(findPassword('vzbxxyzz'))
