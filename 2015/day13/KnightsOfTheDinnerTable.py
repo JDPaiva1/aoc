@@ -29,9 +29,17 @@ def findOptimalOrder(attendees):
 
     return max(optimalOrder, key=lambda x: x[1])
 
+def addMyself(attendees):
+    attendees["Myself"] = {}
+    for attendee in attendees:
+        attendees[attendee]["Myself"] = 0
+        attendees["Myself"][attendee] = 0
+    return attendees
+
 with open('input.txt') as f:
     input = f.read()
     attendes = getAttendees(input)
     print(attendes)
     print(findOptimalOrder(attendes))
-    
+    attendes = addMyself(attendes)
+    print(findOptimalOrder(attendes))
