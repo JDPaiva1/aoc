@@ -5,6 +5,7 @@ def calculateScore(ingredients, quantities):
     durability = 0
     flavor = 0
     texture = 0
+    calories = 0
 
     for i, ingredientProperties in enumerate(ingredients.values()):
         quantity = int(quantities[i])
@@ -12,6 +13,7 @@ def calculateScore(ingredients, quantities):
         durability += quantity * ingredientProperties["durability"]
         flavor += quantity * ingredientProperties["flavor"]
         texture += quantity * ingredientProperties["texture"]
+        calories += quantity * ingredientProperties["calories"]
 
     if capacity < 0:
         capacity = 0
@@ -21,19 +23,24 @@ def calculateScore(ingredients, quantities):
         flavor = 0
     if texture < 0:
         texture = 0
+    if calories < 0:
+        calories = 0
 
-    return capacity * durability * flavor * texture
+    return (capacity * durability * flavor * texture), calories
 
-def findPerfectRecipe(ingredients):
+def findPerfectRecipe(ingredients, caloriesPerCookie = 0):
     maxScore = 0
+    bestScoreWithCalories = 0
     numIngredients = len(ingredients)
 
     for quantities in (permutations(range(100), numIngredients)):
         if sum(quantities) == 100:
-            score = (calculateScore(ingredients, quantities))
+            score, calories = calculateScore(ingredients, quantities)
+            if calories == caloriesPerCookie:
+                bestScoreWithCalories = max(bestScoreWithCalories, score)
             maxScore = max(maxScore, score)
 
-    return maxScore
+    return maxScore, bestScoreWithCalories
 
 ingredients = {}
 with open('input.txt') as f:
@@ -54,4 +61,4 @@ with open('input.txt') as f:
 for ingredient, properties in ingredients.items():
     print(ingredient, properties)
 
-print('Part 1:', findPerfectRecipe(ingredients))
+print(findPerfectRecipe(ingredients, 500))
