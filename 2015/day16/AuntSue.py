@@ -43,3 +43,31 @@ def findAuntSuePartOne(auntsSue, tickerTape):
     return posibleSueNumbers
 
 print('Part 1:', findAuntSuePartOne(auntsSue, tickerTape))
+
+def findAuntSuePartTwo(auntsSue, tickerTape):
+    posibleSueNumbers = set()
+    greaterThan = ['cats', 'trees']
+    lessThan = ['pomeranians', 'goldfish']
+
+    for sueNumber, sueThings in auntsSue.items():
+        thingsMatched = []
+
+        for tickerTapeThing, tickerTapeValue in tickerTape.items():
+            if tickerTapeThing not in sueThings:
+                continue
+
+            if tickerTapeThing in greaterThan and sueThings[tickerTapeThing] <= tickerTapeValue:
+                break
+            elif tickerTapeThing in lessThan and sueThings[tickerTapeThing] >= tickerTapeValue:
+                break
+            elif tickerTapeThing not in greaterThan and tickerTapeThing not in lessThan and sueThings[tickerTapeThing] != tickerTapeValue:
+                break
+
+            thingsMatched.append(tickerTapeThing)
+
+        if len(thingsMatched) == len(sueThings):
+            posibleSueNumbers.add(sueNumber)
+
+    return posibleSueNumbers
+
+print('Part 2:', findAuntSuePartTwo(auntsSue, tickerTape))
