@@ -25,3 +25,13 @@ target = 150
 combinations = findCombinations(containers, target)
 
 print(f"Number of different combinations: {len(combinations)}")
+
+combinations.sort(key=lambda x: len(x))
+leastContainers = len(combinations[0])
+numCombinationsWithLeastContainers = 0
+
+for combination in combinations:
+    if len(combination) == leastContainers:
+        numCombinationsWithLeastContainers += 1
+
+print(f"Number of combinations with the least number of containers: {numCombinationsWithLeastContainers}")
