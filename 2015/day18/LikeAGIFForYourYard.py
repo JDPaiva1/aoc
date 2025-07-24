@@ -45,8 +45,18 @@ def lightsAnimation(lightsGrid):
 def howManyOn(lightsGrid):
     return sum(sum(1 for x in y if x == '#') for y in lightsGrid)
 
+# Part 2
+def lightsStuckOn(lightsGrid):
+    lightsGrid[0][0] = '#'
+    lightsGrid[0][-1] = '#'
+    lightsGrid[-1][0] = '#'
+    lightsGrid[-1][-1] = '#'
+    return lightsGrid
+
 processInput('input.txt')
+lightsGrid = lightsStuckOn(lightsGrid)
 print("Initial State:", howManyOn(lightsGrid))
 for i in range(100):
     lightsGrid = lightsAnimation(lightsGrid)
+    lightsGrid = lightsStuckOn(lightsGrid)
     print("Step", i+1, ":", howManyOn(lightsGrid))
