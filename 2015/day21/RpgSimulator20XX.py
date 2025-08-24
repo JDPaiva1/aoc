@@ -35,9 +35,9 @@ BossStats = [103, 9, 2]
 
 def simulateBattle(player, boss):
     turn = 0
-    print(f"Player {player[0]} HP, {player[1]} damage, {player[2]} armor")
-    print(f"Boss {boss[0]} HP, {boss[1]} damage, {boss[2]} armor")
-    print("Battle begins!")
+    # print(f"Player {player[0]} HP, {player[1]} damage, {player[2]} armor")
+    # print(f"Boss {boss[0]} HP, {boss[1]} damage, {boss[2]} armor")
+    # print("Battle begins!")
 
     while player[0] > 0 and boss[0] > 0:
         if(turn % 2 == 0):
@@ -58,7 +58,6 @@ def simulateBattle(player, boss):
 
 def leastAmountOfGoldToWin():
     minCost = int()
-    RINGS.sort(key=lambda x: x[1])
     for weapon in WEAPONS:
         for armor in ARMOR:
             for ring1 in RINGS:
@@ -80,4 +79,28 @@ def leastAmountOfGoldToWin():
                             minCost = min(minCost, cost) if minCost > 0 else cost
     return minCost
 
+def mostAmountOfGoldToLose():
+    maxCost = int()
+    for weapon in WEAPONS:
+        for armor in ARMOR:
+            for ring1 in RINGS:
+                for ring2 in RINGS:
+                    if ring1 != ring2:
+                        player = PlayerStats.copy()
+                        boss = BossStats.copy()
+
+                        cost = sum([weapon[1], armor[1], ring1[1], ring2[1]])
+                        damage = sum([weapon[2], ring1[2], ring2[2]])
+                        playerArmor = sum([armor[3], ring1[3], ring2[3]])
+
+                        player[1] += damage
+                        player[2] += playerArmor
+
+                        result = simulateBattle(player, boss)
+
+                        if result == "Boss":
+                            maxCost = max(maxCost, cost) if maxCost > 0 else cost
+    return maxCost
+
 print(f"The least amount of gold to win: {leastAmountOfGoldToWin()}")
+print(f"The most amount of gold to lose: {mostAmountOfGoldToLose()}")
