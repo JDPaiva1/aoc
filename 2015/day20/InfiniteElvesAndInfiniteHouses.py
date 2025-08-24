@@ -57,5 +57,35 @@ def elfPerspective(targetPresents):
 
     return -1  # Not found within our bounds
 
+def lowestHouseToGetPart2(targetPresents):
+    houseNum = 1
+
+    while True:
+        totalPresents = 0
+        # For this house, find all elves that would visit it
+        # An elf 'e' visits house 'houseNum' if:
+        # 1. houseNum is divisible by e (houseNum % e == 0)
+        # 2. houseNum/e <= 50 (this elf hasn't exceeded their 50 house limit)
+        elf = 1
+        while elf * elf <= houseNum:
+            if houseNum % elf == 0:
+                # elf is a divisor
+                # Check if this elf would still be delivering (hasn't hit 50 house limit)
+                if houseNum // elf <= 50:
+                    totalPresents += elf * 11
+
+                # Also check the paired divisor (houseNum // elf)
+                otherElf = houseNum // elf
+                if otherElf != elf and houseNum // otherElf <= 50:
+                    totalPresents += otherElf * 11
+
+            elf += 1
+
+        if totalPresents >= targetPresents:
+            return houseNum
+
+        houseNum += 1
+
 input = 33100000
-print(elfPerspective(input))
+print(f"Part 1: {elfPerspective(input)}")
+print(f"Part 2: {lowestHouseToGetPart2(input)}")
