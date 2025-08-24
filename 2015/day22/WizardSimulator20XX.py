@@ -58,14 +58,15 @@ BOSS_STATS = {
 }
 
 class GameState:
-    def __init__(self):
+    def __init__(self, hardMode):
         self.player = PLAYER_STATS.copy()
         self.boss = BOSS_STATS.copy()
         self.activeEffects = {}
         self.totalManaSpent = 0
+        self.hardMode = hardMode
 
     def copy(self):
-        newState = GameState()
+        newState = GameState(self.hardMode)
         newState.player = self.player.copy()
         newState.boss = self.boss.copy()
         newState.activeEffects = self.activeEffects.copy()
@@ -137,9 +138,9 @@ class GameState:
         else:
             return None
 
-def leastAmountOfManaToWin():
+def leastAmountOfManaToWin(hardMode=False):
     """Find the minimum mana needed to win using BFS"""
-    initialState = GameState()
+    initialState = GameState(hardMode)
     queue = deque([initialState])
     minMana = float('inf')
 
@@ -148,6 +149,10 @@ def leastAmountOfManaToWin():
         # Pruning: if we've already spent more mana than our best solution, skip
         if state.totalManaSpent >= minMana:
             continue
+
+        # Player turn - hard mode damage first
+        if state.hardMode:
+            state.player["hp"] -= 1
         # Player turn - apply effects first
         state.applyEffects()
         # Check if boss died from effects
@@ -187,3 +192,4 @@ def leastAmountOfManaToWin():
     return minMana
 
 print(f"Least amount of mana to win: {leastAmountOfManaToWin()}")
+print(f"Least amount of mana to win in hard mode: {leastAmountOfManaToWin(True)}")
