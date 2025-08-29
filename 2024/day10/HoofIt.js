@@ -4,13 +4,6 @@ const lines = fs.readFileSync("input.txt", "utf8").trim().split("\n");
 
 const topographicMap = lines.map((row) => row.trim().split("").map(Number));
 
-const directions = [
-  [0, 1],
-  [1, 0],
-  [0, -1],
-  [-1, 0],
-];
-
 function findTrailheads(topographicMap) {
   const trailheads = [];
   for (let i = 0; i < topographicMap.length; i++) {
@@ -23,9 +16,15 @@ function findTrailheads(topographicMap) {
   return trailheads;
 }
 
-function findNumberOfHikingTrails(topographicMap) {
+function findHikingTrails(topographicMap, isRating = false) {
   const trailheads = findTrailheads(topographicMap);
-  let score = 0;
+  const directions = [
+    [0, 1],
+    [1, 0],
+    [0, -1],
+    [-1, 0],
+  ];
+  let numHeightsReached = 0;
 
   for (const trailhead of trailheads) {
     const visited = new Set();
@@ -38,7 +37,7 @@ function findNumberOfHikingTrails(topographicMap) {
       const currentHeight = topographicMap[currentX][currentY];
 
       if (currentHeight === 9) {
-        score++;
+        numHeightsReached++;
         continue;
       }
 
@@ -49,11 +48,15 @@ function findNumberOfHikingTrails(topographicMap) {
           newX < 0 ||
           newX >= topographicMap.length ||
           newY < 0 ||
-          newY >= topographicMap[0].length ||
-          visited.has(`${newX},${newY}`)
+          newY >= topographicMap[0].length
         ) {
           continue;
         }
+
+        if (visited.has(`${newX},${newY}`) && !isRating) {
+          continue;
+        }
+
         if (topographicMap[newX][newY] === currentHeight + 1) {
           queue.push([newX, newY]);
           visited.add(`${newX},${newY}`);
@@ -62,8 +65,11 @@ function findNumberOfHikingTrails(topographicMap) {
     }
   }
 
-  return score;
+  return numHeightsReached;
 }
 
-const hikingTrails = findNumberOfHikingTrails(topographicMap);
-console.log("Number of hiking trails:", hikingTrails);
+const scopesOfTrails = findHikingTrails(topographicMap);
+console.log("Scores of all trailheads:", scopesOfTrails);
+
+const ratingOfTrails = findHikingTrails(topographicMap, true);
+console.log("Rating of hiking trails:", ratingOfTrails);
