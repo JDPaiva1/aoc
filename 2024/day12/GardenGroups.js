@@ -81,19 +81,85 @@ function getPerimeter(region) {
   return perimeter;
 }
 
-function getTotalFencingCost(regions) {
+function getSides(region) {
+  const regionSet = new Set(region.map(([x, y]) => `${x},${y}`));
+
+  const horizontalFences = new Map();
+  const verticalFences = new Map();
+
+  for (const [x, y] of region) {
+    if (x === 0 || !regionSet.has(`${x - 1},${y}`)) {
+      if (!horizontalFences.has(`top-${x}`)) {
+        horizontalFences.set(`top-${x}`, new Set());
+      }
+      horizontalFences.get(`top-${x}`).add(y);
+    }
+
+    if (x === map.length - 1 || !regionSet.has(`${x + 1},${y}`)) {
+      if (!horizontalFences.has(`bottom-${x}`)) {
+        horizontalFences.set(`bottom-${x}`, new Set());
+      }
+      horizontalFences.get(`bottom-${x}`).add(y);
+    }
+
+    if (y === 0 || !regionSet.has(`${x},${y - 1}`)) {
+      if (!verticalFences.has(`left-${y}`)) {
+        verticalFences.set(`left-${y}`, new Set());
+      }
+      verticalFences.get(`left-${y}`).add(x);
+    }
+
+    if (y === map[0].length - 1 || !regionSet.has(`${x},${y + 1}`)) {
+      if (!verticalFences.has(`right-${y}`)) {
+        verticalFences.set(`right-${y}`, new Set());
+      }
+      verticalFences.get(`right-${y}`).add(x);
+    }
+  }
+
+  let sides = 0;
+
+  for (const [fenceKey, columns] of horizontalFences) {
+    const sortedCols = Array.from(columns).sort((a, b) => a - b);
+    let segments = 1;
+
+    for (let i = 1; i < sortedCols.length; i++) {
+      if (sortedCols[i] - sortedCols[i - 1] > 1) {
+        segments++;
+      }
+    }
+    sides += segments;
+  }
+
+  for (const [fenceKey, rows] of verticalFences) {
+    const sortedRows = Array.from(rows).sort((a, b) => a - b);
+    let segments = 1;
+
+    for (let i = 1; i < sortedRows.length; i++) {
+      if (sortedRows[i] - sortedRows[i - 1] > 1) {
+        segments++;
+      }
+    }
+    sides += segments;
+  }
+
+  return sides;
+}
+
+function getTotalFencingCost(regions, isBulk = false) {
   let totalCost = 0;
   regions.forEach((region) => {
     const letter = map[region[0][0]][region[0][1]];
     const area = getArea(region);
-    const perimeter = getPerimeter(region);
-    const cost = area * perimeter;
+    const calc = isBulk ? getSides(region) : getPerimeter(region);
+    const cost = area * calc;
     console.log(
-      `A region of ${letter} plants with price ${area} * ${perimeter} = ${cost}.`
+      `A region of ${letter} plants with price ${area} * ${calc} = ${cost}.`
     );
     totalCost += cost;
   });
   return totalCost;
 }
 
-console.log(getTotalFencingCost(getRegions(map)));
+// console.log(getTotalFencingCost(getRegions(map)));
+console.log(getTotalFencingCost(getRegions(map), true));
