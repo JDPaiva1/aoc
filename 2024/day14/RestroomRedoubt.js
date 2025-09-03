@@ -79,6 +79,36 @@ function getSafetyFactor() {
   return quadrants.reduce((a, b) => a * b, 1);
 }
 
-simulateRobots(100);
+function getBoundingBoxArea() {
+  const xs = robotList.map((r) => r[0][0]);
+  const ys = robotList.map((r) => r[0][1]);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  return (maxX - minX + 1) * (maxY - minY + 1);
+}
+
+function findTree() {
+  let seconds = 0;
+  let bestSeconds = 0;
+  let minArea = Infinity;
+
+  while (seconds < 100000) {
+    // just cap it high enough
+    moveRobots();
+    seconds++;
+    const area = getBoundingBoxArea();
+    if (area < minArea) {
+      minArea = area;
+      bestSeconds = seconds;
+    }
+  }
+
+  return bestSeconds;
+}
+
+// simulateRobots(100);
+console.log(findTree());
 // console.table(space.map((row) => row.map((cell) => cell || ".")));
-console.log(getSafetyFactor());
+// console.log(getSafetyFactor());
