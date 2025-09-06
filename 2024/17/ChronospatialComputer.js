@@ -110,5 +110,16 @@ function runProgram(r, program) {
   return output.join(",");
 }
 
+function findAValue(r, program) {
+  let output = "";
+  let a = 0;
+  while (output !== program.join(",")) {
+    a++;
+    output = runProgram({ ...r, a }, program);
+  }
+  return a;
+}
+
 const [registers, program] = getProgramInfo(input);
 console.log("Part 1:", runProgram(registers, program));
+console.log("Part 2:", findAValue(registers, program));
