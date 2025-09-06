@@ -20,26 +20,21 @@ function getMap(input) {
   return { map, endPosition, startPosition };
 }
 
+const dirs = {
+  north: [-1, 0],
+  east: [0, 1],
+  south: [1, 0],
+  west: [0, -1],
+};
+
 function findPath() {
   const { map, endPosition, startPosition } = getMap(input);
   // console.table(map);
   // console.log(`startPosition: ${startPosition}, endPosition: ${endPosition}`);
-  const dirs = {
-    north: [-1, 0],
-    east: [0, 1],
-    south: [1, 0],
-    west: [0, -1],
-  };
-
-  const queue = [];
-  const addToQueue = (position, dir, cost) => {
-    queue.push([position, dir, cost]);
-    queue.sort((a, b) => a[2] - b[2]);
-  };
 
   const seen = new Map();
-
-  addToQueue(startPosition, "east", 0);
+  const queue = [];
+  queue.push([startPosition, "east", 0]);
 
   while (queue.length > 0) {
     const [[x, y], dir, cost] = queue.shift();
@@ -63,15 +58,68 @@ function findPath() {
       ny < map[0].length &&
       map[ny][nx] !== "#"
     ) {
-      addToQueue([nx, ny], dir, cost + 1);
+      queue.push([[nx, ny], dir, cost + 1]);
     }
 
     for (const [key, value] of Object.entries(dirs)) {
       if (key === dir) continue;
-      addToQueue([x, y], key, cost + 1000);
+      queue.push([[x, y], key, cost + 1000]);
     }
+    queue.sort((a, b) => a[2] - b[2]);
   }
   return null;
 }
 
-console.log(findPath());
+function findBestPath(minEndCost = Infinity) {
+  const { map, endPosition, startPosition } = getMap(input);
+  const costs = new Map();
+  const optimalPaths = new Set();
+  const paths = new Map();
+
+  const queue = [];
+  queue.push([
+    startPosition,
+    "east",
+    0,
+    [`${startPosition[0]},${startPosition[1]}`],
+  ]);
+
+  while (queue.length > 0) {
+    const [[x, y], dir, cost, path] = queue.shift();
+    const key = `${x},${y},${dir}`;
+
+    if (cost > minEndCost) continue;
+    if (costs.has(key) && costs.get(key) < cost) continue;
+
+    costs.set(key, cost);
+    paths.set(key, path);
+
+    if (x === endPosition[0] && y === endPosition[1]) {
+      path.forEach((pos) => optimalPaths.add(pos));
+      continue;
+    }
+
+    const [nx, ny] = [x + dirs[dir][0], y + dirs[dir][1]];
+    if (
+      nx >= 0 &&
+      nx < map.length &&
+      ny >= 0 &&
+      ny < map[0].length &&
+      map[ny][nx] !== "#"
+    ) {
+      queue.push([[nx, ny], dir, cost + 1, [...path, `${nx},${ny}`]]);
+    }
+
+    for (const [key, value] of Object.entries(dirs)) {
+      if (key === dir) continue;
+      queue.push([[x, y], key, cost + 1000, [...path, `${x},${y}`]]);
+    }
+    queue.sort((a, b) => a[2] - b[2]);
+  }
+
+  return optimalPaths.size;
+}
+
+const minEndCost = findPath();
+console.log(minEndCost);
+console.log(findBestPath(minEndCost));
