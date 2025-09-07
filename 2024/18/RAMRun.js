@@ -67,8 +67,24 @@ function findMinNumOfStepsToExit(grid) {
   return null;
 }
 
+function findByteThatCutExit() {
+  const corruptedMemory = getCorruptedMemory(input);
+  const grid = initGrid(71);
+
+  for (let i = 0; i < corruptedMemory.length; i++) {
+    drawCorruptedMemory(corruptedMemory, grid, i);
+    const steps = findMinNumOfStepsToExit(grid);
+    if (steps === null) {
+      return corruptedMemory[i - 1];
+    }
+  }
+  return null;
+}
+
 console.log(
   findMinNumOfStepsToExit(
     drawCorruptedMemory(getCorruptedMemory(input), initGrid(71), 1024)
   )
 );
+
+console.log(findByteThatCutExit());
