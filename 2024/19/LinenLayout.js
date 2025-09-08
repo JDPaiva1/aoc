@@ -53,6 +53,34 @@ function getNumOfPossibleDesigns(towelPatterns, desiredDesigns) {
   return numOfPossibleDesigns;
 }
 
+function getNumOfDifferentPossibleDesigns(towelPatterns, desiredDesigns) {
+  let numOfPossibleDesigns = 0;
+  const memo = new Map();
+
+  const findDesigns = (design) => {
+    if (design === "") return 1;
+    if (memo.has(design)) return memo.get(design);
+
+    let ways = 0;
+    for (const pattern of towelPatterns) {
+      if (design.startsWith(pattern)) {
+        const remainder = design.slice(pattern.length);
+        ways += findDesigns(remainder);
+      }
+    }
+
+    memo.set(design, ways);
+    return ways;
+  };
+
+  for (const desiredDesign of desiredDesigns) {
+    numOfPossibleDesigns += findDesigns(desiredDesign);
+  }
+
+  return numOfPossibleDesigns;
+}
+
 const { towelPatterns, desiredDesigns } =
   getTowelPatternsAndDesiredDesigns(input);
 console.log(getNumOfPossibleDesigns(towelPatterns, desiredDesigns));
+console.log(getNumOfDifferentPossibleDesigns(towelPatterns, desiredDesigns));
