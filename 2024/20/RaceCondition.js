@@ -26,7 +26,7 @@ const dirs = [
   [0, 1],
 ];
 
-function findCheats(savedPicoseconds = 0) {
+function findCheats(minSaving = 0, cheatLength = 2) {
   const map = getMap(input);
   const visited = new Set();
   const path = [];
@@ -64,9 +64,9 @@ function findCheats(savedPicoseconds = 0) {
       const [x2, y2] = path[j];
       const d = Math.abs(x1 - x2) + Math.abs(y1 - y2);
 
-      if (d <= 2) {
+      if (d <= cheatLength) {
         const cheatLength = i + d + (baseline - j);
-        if (baseline - cheatLength >= savedPicoseconds) {
+        if (baseline - cheatLength >= minSaving) {
           count++;
         }
       }
@@ -76,4 +76,5 @@ function findCheats(savedPicoseconds = 0) {
   return count;
 }
 
-console.log(findCheats(100));
+console.log("Part 1:", findCheats(100));
+console.log("Part 2:", findCheats(100, 20));
