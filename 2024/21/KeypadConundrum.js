@@ -121,4 +121,24 @@ function findComplexity(codes) {
   return total;
 }
 
+function findComplexityPart2(codes) {
+  let total = 0;
+
+  for (const code of codes) {
+    let pos = numericStart;
+    let totalLen = 0;
+
+    for (const digit of code) {
+      const len = minSequenceLength(numericKeypad, pos, digit, 25);
+      totalLen += len;
+      pos = findKeyPosition(numericKeypad, digit);
+    }
+
+    total += totalLen * parseInt(code, 10);
+  }
+
+  return total;
+}
+
 console.log(findComplexity(input));
+console.log(findComplexityPart2(input));
