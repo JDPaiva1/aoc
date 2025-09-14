@@ -2,7 +2,7 @@ import fs from "fs";
 
 const connections = fs.readFileSync("input.txt", "utf-8").trim().split("\n");
 
-function findConnectedComputers(connections) {
+function getconnectedComputers(connections) {
   const connectedComputers = new Map();
   for (const connection of connections) {
     const [computer1, computer2] = connection.split("-");
@@ -18,6 +18,11 @@ function findConnectedComputers(connections) {
     }
   }
   console.table(connectedComputers);
+  return connectedComputers;
+}
+
+function findConnectedComputers(connections) {
+  const connectedComputers = getconnectedComputers(connections);
 
   const innerConnections = new Set();
   const innerConnectionsWithT = new Set();
@@ -43,4 +48,50 @@ function findConnectedComputers(connections) {
   return innerConnectionsWithT.size;
 }
 
+function findPassword(connections) {
+  const connectedComputers = getconnectedComputers(connections);
+
+  const isConneted = (computer, connections) => {
+    const computerConnections = connectedComputers.get(computer);
+    for (const c of connections) {
+      if (!computerConnections.includes(c)) return false;
+    }
+    return true;
+  };
+
+  const innerConnections = new Set();
+  for (const [computer, connected] of connectedComputers) {
+    if (!computer.startsWith("t")) continue;
+
+    for (let i = 0; i < connected.length; i++) {
+      const currentComputer = connected[i];
+      const currentConnections = connectedComputers.get(currentComputer);
+      const connections = [];
+
+      for (let j = 0; j < connected.length; j++) {
+        if (j === i) continue;
+
+        const nextComputer = connected[j];
+
+        if (!currentConnections.includes(nextComputer)) continue;
+        if (!isConneted(nextComputer, connections)) continue;
+
+        connections.push(nextComputer);
+      }
+
+      connections.push(computer, currentComputer);
+      innerConnections.add(connections.sort().join(","));
+    }
+  }
+  console.log(innerConnections);
+
+  let password = "";
+  for (const connection of innerConnections) {
+    if (connection.length < password.length) continue;
+    password = connection;
+  }
+  return password;
+}
+
 console.log(findConnectedComputers(connections));
+console.log(findPassword(connections));
