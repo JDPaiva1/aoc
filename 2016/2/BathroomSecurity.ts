@@ -2,13 +2,24 @@ import { readFileSync } from "fs";
 
 const instructions = readFileSync("input.txt", "utf-8").trim().split("\n");
 
-const keypad = [
+const keypad1 = [
   ["1", "2", "3"],
   ["4", "5", "6"],
   ["7", "8", "9"],
 ];
+const keypad2 = [
+  ["", "", "1", "", ""],
+  ["", "2", "3", "4", ""],
+  ["5", "6", "7", "8", "9"],
+  ["", "A", "B", "C", ""],
+  ["", "", "D", "", ""],
+];
 
-function findCode(instructions: string[], keypad: string[][]) {
+function findCode(
+  instructions: string[],
+  keypad: string[][],
+  start: [number, number]
+) {
   const dirs = {
     U: [0, -1],
     D: [0, 1],
@@ -16,7 +27,7 @@ function findCode(instructions: string[], keypad: string[][]) {
     R: [1, 0],
   };
   let code = "";
-  let [px, py] = [1, 1];
+  let [px, py] = start;
 
   for (let i = 0; i < instructions.length; i++) {
     const instruction = instructions[i];
@@ -30,7 +41,8 @@ function findCode(instructions: string[], keypad: string[][]) {
         newX >= 0 &&
         newX < keypad.length &&
         newY >= 0 &&
-        newY < keypad[0].length
+        newY < keypad[0].length &&
+        keypad[newY][newX] !== ""
       ) {
         px = newX;
         py = newY;
@@ -45,4 +57,5 @@ function findCode(instructions: string[], keypad: string[][]) {
   return code;
 }
 
-console.log(findCode(instructions, keypad));
+console.log(findCode(instructions, keypad1, [1, 1]));
+console.log(findCode(instructions, keypad2, [0, 2]));
