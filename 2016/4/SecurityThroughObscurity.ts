@@ -1,9 +1,10 @@
 import { readFileSync } from "fs";
 
-const roomList = readFileSync("example.txt", "utf-8").trim().split("\n");
+const roomList = readFileSync("input.txt", "utf-8").trim().split("\n");
 
-function sumRealRoomsIds(roomList: string[]) {
+function getRealRooms(roomList: string[]) {
   let sum = 0;
+  const realRooms: [string, number][] = [];
 
   for (const room of roomList) {
     const [roomName, checksum] = room.trim().replace("]", "").split("[");
@@ -27,10 +28,31 @@ function sumRealRoomsIds(roomList: string[]) {
     if (sortedCommonChars.join("") === checksum) {
       const roomId = roomName.match(/\d+/g)?.[0];
       sum += Number(roomId);
+      realRooms.push([roomName.replace(`-${roomId}`, ""), Number(roomId)]);
     }
   }
 
-  return sum;
+  return { sum, realRooms };
 }
 
-console.log("Part 1: ", sumRealRoomsIds(roomList));
+function decryptRoomName(realRooms: [string, number][]) {
+  const decryptedRooms = realRooms.map(([roomName, roomId]) => {
+    return roomName
+      .replace(/\-\d/g, "")
+      .split("")
+      .map((char) => {
+        if (char === "-") return " ";
+        return String.fromCharCode(
+          ((char.charCodeAt(0) - 97 + roomId) % 26) + 97
+        );
+      })
+      .concat(" ", roomId.toString())
+      .join("");
+  });
+
+  return decryptedRooms.filter((room) => room.includes("north"));
+}
+
+const { sum, realRooms } = getRealRooms(roomList);
+console.log("Part 1: ", sum);
+console.log("Part 2: ", decryptRoomName(realRooms));
