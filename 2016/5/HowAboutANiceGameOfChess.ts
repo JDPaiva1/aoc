@@ -26,4 +26,30 @@ function findPassword(input: string) {
   return password;
 }
 
+function findPassword2(input: string) {
+  let index = 0;
+  let hash = getHash(input, index);
+  const password: Record<string, string> = {};
+
+  while (Object.keys(password).length < 8) {
+    if (hash.startsWith("00000")) {
+      const position = hash[5];
+      if (position >= "0" && position <= "7" && !password[position]) {
+        const char = hash[6];
+        password[position] = char;
+      }
+    }
+    hash = getHash(input, index);
+    index++;
+  }
+
+  const sortedPassword = Object.keys(password)
+    .sort((a, b) => Number(a) - Number(b))
+    .map((key) => password[key])
+    .join("");
+
+  return sortedPassword;
+}
+
 console.log("Part 1: ", findPassword(input));
+console.log("Part 2: ", findPassword2(input));
