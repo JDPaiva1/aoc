@@ -4,7 +4,7 @@ const repeatingMessageSignal = readFileSync("input.txt", "utf8")
   .trim()
   .split("\n");
 
-function getCorrectMessage(signal: string[]) {
+function getCorrectMessage(signal: string[], leastCommon = false) {
   let message = "";
 
   for (let i = 0; i < signal[0].length; i++) {
@@ -21,7 +21,7 @@ function getCorrectMessage(signal: string[]) {
     }
 
     const mostCommonChar = Array.from(charCount.entries())
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => (leastCommon ? a[1] - b[1] : b[1] - a[1]))
       .map(([char]) => char)[0]!;
 
     message += mostCommonChar;
@@ -31,3 +31,4 @@ function getCorrectMessage(signal: string[]) {
 }
 
 console.log("Part 1: ", getCorrectMessage(repeatingMessageSignal));
+console.log("Part 2: ", getCorrectMessage(repeatingMessageSignal, true));
