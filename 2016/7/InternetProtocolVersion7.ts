@@ -38,15 +38,41 @@ function isTlsSupported(inside: string[], outside: string[]) {
   return isABBA(outside) && !isABBA(inside);
 }
 
-function getTlsSupportedIpList(ipList: string[]) {
+function isSslSupported(inside: string[], outside: string[]) {
+  for (const part of inside) {
+    for (let i = 0; i < part.length - 2; i++) {
+      if (part[i] === part[i + 1] || part[i] !== part[i + 2]) continue;
+
+      const aba = part[i + 1] + part[i] + part[i + 1];
+
+      for (const outerPart of outside) {
+        if (outerPart.includes(aba)) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+function getSupportedIpList(ipList: string[]) {
   const tlsSupportedIpList = [];
+  const sslSupportedIpList = [];
+
   for (const ip of ipList) {
     const { inside, outside } = splitParts(ip);
+
     if (isTlsSupported(inside, outside)) {
       tlsSupportedIpList.push(ip);
     }
+
+    if (isSslSupported(inside, outside)) {
+      sslSupportedIpList.push(ip);
+    }
   }
-  return tlsSupportedIpList.length;
+
+  return { tls: tlsSupportedIpList.length, ssl: sslSupportedIpList.length };
 }
 
-console.log(getTlsSupportedIpList(ipList));
+console.log(getSupportedIpList(ipList));
