@@ -49,7 +49,12 @@ function executeOperations(operations: string[]) {
   }
 
   // console.table(screen);
-  return screen.flat().filter((pixel) => pixel === "#").length;
+  console.log("Part 1:", screen.flat().filter((pixel) => pixel === "#").length);
+  return screen;
 }
 
-console.table(executeOperations(operations));
+function readScreen(screen: string[][]) {
+  return screen.map((row) => row.join("")).join("\n");
+}
+
+console.log("Part 2:", readScreen(executeOperations(operations)));
