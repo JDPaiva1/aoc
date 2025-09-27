@@ -30,4 +30,38 @@ function decompressedLength(fileContent: string[]) {
   return totalLength;
 }
 
+function decompressedLengthPart2(fileContent: string[]) {
+  let totalLength = 0;
+
+  const decompress = (line: string) => {
+    const regex = /\((\d+)x(\d+)\)/;
+    const match = line.match(regex);
+    if (!match) return line.length;
+
+    let strLength = line.slice(0, match.index!).length;
+    const [marker, lengthStr, timesStr] = match;
+    const length = Number(lengthStr);
+    const times = Number(timesStr);
+
+    const markerEnd = match.index! + marker.length;
+    const strToRepeat = line.slice(markerEnd, markerEnd + length);
+    const strEnd = line.slice(markerEnd + length);
+
+    strLength += decompress(strToRepeat) * times;
+
+    if (strEnd.length > 0) {
+      strLength += decompress(strEnd);
+    }
+
+    return strLength;
+  };
+
+  for (const line of fileContent) {
+    totalLength += decompress(line);
+  }
+
+  return totalLength;
+}
+
 console.log("Part 1:", decompressedLength(input));
+console.log("Part 2:", decompressedLengthPart2(input));
