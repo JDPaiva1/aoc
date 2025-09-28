@@ -1,6 +1,5 @@
 import { readFileSync } from "fs";
 
-// const input = readFileSync("example.txt", "utf8");
 const input = readFileSync("input.txt", "utf8");
 
 type Rule = {
@@ -57,6 +56,8 @@ function execute(input: string, compare: [number, number]) {
     giveChip(bot, value);
   }
 
+  let foundBot: string | undefined;
+
   let progress = true;
   while (progress) {
     progress = false;
@@ -66,7 +67,7 @@ function execute(input: string, compare: [number, number]) {
         const [low, high] = chips;
 
         if (chips.includes(compare[0]) && chips.includes(compare[1])) {
-          return bot;
+          foundBot = bot;
         }
 
         const rule = rules[bot];
@@ -80,7 +81,16 @@ function execute(input: string, compare: [number, number]) {
       }
     }
   }
+
+  return { foundBot, outputs };
 }
 
-// console.log("Part 1:", execute(input, [5, 2]));
-console.log("Part 1:", execute(input, [61, 17]));
+function multiplyOutputs(outputs: Record<string, number[]>) {
+  return (
+    (outputs["0"][0] ?? 1) * (outputs["1"][0] ?? 1) * (outputs["2"][0] ?? 1)
+  );
+}
+
+const { foundBot, outputs } = execute(input, [61, 17]);
+console.log("Part 1:", foundBot);
+console.log("Part 2:", multiplyOutputs(outputs));
