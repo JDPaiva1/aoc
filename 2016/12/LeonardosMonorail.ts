@@ -36,9 +36,12 @@ function jnz(x: string, y: string, registers: Record<string, number>) {
   return Number(y);
 }
 
-function execAssembunny(input: string) {
+function execAssembunny(
+  input: string,
+  initialRegisters: Record<string, number> = { a: 0, b: 0, c: 0, d: 0 }
+) {
   const instructions = getInstructions(input);
-  const registers = { a: 0, b: 0, c: 0, d: 0 };
+  const registers = { ...initialRegisters };
   let pointer = 0;
   while (pointer < instructions.length) {
     const [instruction, x, y] = instructions[pointer];
@@ -60,3 +63,4 @@ function execAssembunny(input: string) {
 }
 
 console.log("Part 1:", execAssembunny(input));
+console.log("Part 2:", execAssembunny(input, { c: 1 }));
