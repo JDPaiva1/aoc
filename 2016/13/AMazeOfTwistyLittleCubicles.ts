@@ -26,7 +26,7 @@ function getNeighbors(position: [number, number], input: number) {
   return neighbors;
 }
 
-function findShortestPath(input: number, target: [number, number]) {
+function findShortestPath(input: number, target: [number, number] | number) {
   const queue = [{ position: [1, 1], steps: 0 }];
   const visited: Set<string> = new Set([`1,1`]);
 
@@ -35,9 +35,15 @@ function findShortestPath(input: number, target: [number, number]) {
       position: [number, number];
       steps: number;
     };
-    if (position[0] === target[0] && position[1] === target[1]) {
+    if (
+      Array.isArray(target) &&
+      position[0] === target[0] &&
+      position[1] === target[1]
+    ) {
       return steps;
     }
+
+    if (!Array.isArray(target) && steps === target) return visited.size;
 
     const neighbors = getNeighbors(position, input);
     for (const neighbor of neighbors) {
@@ -49,3 +55,4 @@ function findShortestPath(input: number, target: [number, number]) {
 }
 
 console.log("Part 1:", findShortestPath(Number(input), [31, 39]));
+console.log("Part 2:", findShortestPath(Number(input), 50));
