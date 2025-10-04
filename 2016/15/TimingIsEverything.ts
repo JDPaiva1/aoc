@@ -12,8 +12,14 @@ function getDiscs(input: string) {
   });
 }
 
-function findFirstValidTime() {
+function findFirstValidTime(part2: boolean = false) {
   const discs = getDiscs(input);
+  if (part2) {
+    discs.push({
+      numPositions: 11,
+      currentPosition: 0,
+    });
+  }
   let time = 0;
   const canGetThrough = (time: number) => {
     return discs.every(
@@ -28,3 +34,4 @@ function findFirstValidTime() {
 }
 
 console.log("Part 1:", findFirstValidTime());
+console.log("Part 2:", findFirstValidTime(true));
