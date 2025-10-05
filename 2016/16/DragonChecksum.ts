@@ -28,3 +28,4 @@ function getCorrectChecksum(initialState: string, diskLength: number) {
 }
 
 console.log("Part 1:", getCorrectChecksum(initialState, 272));
+console.log("Part 2:", getCorrectChecksum(initialState, 35651584));
