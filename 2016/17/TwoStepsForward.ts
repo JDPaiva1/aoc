@@ -47,4 +47,28 @@ function getPath(passcode: string) {
   }
 }
 
+function getLongestPath(passcode: string) {
+  const stack: Array<[[number, number], string, number]> = [[[1, 1], "", 0]];
+  let longestPath = 0;
+
+  while (stack.length > 0) {
+    const [[x, y], path, steps] = stack.shift()!;
+    if (x === 4 && y === 4) {
+      longestPath = Math.max(longestPath, steps);
+      continue;
+    }
+
+    const openDoors = getOpenDoors(passcode, path);
+    for (const dir of openDoors) {
+      const [dx, dy] = dirs[dir];
+      const [nx, ny] = [x + dx, y + dy];
+      if (nx <= 0 || ny <= 0 || nx > 4 || ny > 4) continue;
+      stack.push([[nx, ny], path + dir, steps + 1]);
+    }
+  }
+
+  return longestPath;
+}
+
 console.log("Part 1:", getPath(passcode));
+console.log("Part 2:", getLongestPath(passcode));
