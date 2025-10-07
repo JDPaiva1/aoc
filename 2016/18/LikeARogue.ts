@@ -38,3 +38,4 @@ function getSafeTiles(startingRow: string, rows: number) {
 }
 
 console.log("Part 1:", getSafeTiles(startingRow, 40));
+console.log("Part 2:", getSafeTiles(startingRow, 400000));
