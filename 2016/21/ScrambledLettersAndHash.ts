@@ -85,4 +85,59 @@ function scramble(operations: string[], password: string) {
   return scrambledPassword.join("");
 }
 
+function unscramble(operations: string[], password: string) {
+  let scrambledPassword = password.split("");
+  for (const operation of operations.reverse()) {
+    const operationParts = operation.split(" ");
+
+    if (operationParts[0].startsWith("swap")) {
+      const [x, y] = [operationParts[2], operationParts[5]];
+      if (operationParts[1].startsWith("position")) {
+        scrambledPassword = swap(scrambledPassword, Number(x), Number(y));
+      } else {
+        scrambledPassword = swap(
+          scrambledPassword,
+          scrambledPassword.indexOf(x),
+          scrambledPassword.indexOf(y)
+        );
+      }
+    }
+
+    if (operationParts[0].startsWith("rotate")) {
+      if (operationParts[1].startsWith("based")) {
+        const x = operationParts[6];
+        const targetPassword = scrambledPassword.join("");
+
+        for (let i = 0; i < scrambledPassword.length; i++) {
+          const candidate = rotate([...scrambledPassword], "left", i);
+          const index = candidate.indexOf(x);
+          const steps = index >= 4 ? index + 2 : index + 1;
+          const rotated = rotate([...candidate], "right", steps);
+
+          if (rotated.join("") === targetPassword) {
+            scrambledPassword = candidate;
+            break;
+          }
+        }
+      } else {
+        const x = operationParts[2];
+        const direction = operationParts[1] === "left" ? "right" : "left";
+        scrambledPassword = rotate(scrambledPassword, direction, Number(x));
+      }
+    }
+
+    if (operationParts[0].startsWith("reverse")) {
+      const [x, y] = [operationParts[2], operationParts[4]].map(Number);
+      scrambledPassword = reverse(scrambledPassword, x, y);
+    }
+
+    if (operationParts[0].startsWith("move")) {
+      const [y, x] = [operationParts[2], operationParts[5]].map(Number);
+      scrambledPassword = move(scrambledPassword, x, y);
+    }
+  }
+  return scrambledPassword.join("");
+}
+
 console.log("Part 1:", scramble(operations, "abcdefgh"));
+console.log("Part 2:", unscramble(operations, "fbgdceah"));
