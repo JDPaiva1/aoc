@@ -85,3 +85,4 @@ function execAssembunny(
 }
 
 console.log("Part 1:", execAssembunny(input, { a: 7 }));
+console.log("Part 2:", execAssembunny(input, { a: 12 }));
