@@ -83,7 +83,7 @@ function bfs(map: string[][], start: Point) {
   return distances;
 }
 
-function findShortestPath(input: string) {
+function findShortestPath(input: string, returnToStart = false) {
   const { map, locations } = getMap(input);
   const digits = Array.from(locations.keys()).sort(
     (a, b) => Number(a) - Number(b)
@@ -104,7 +104,14 @@ function findShortestPath(input: string) {
     }
 
     if (remaining.length === 0) {
-      best = Math.min(best, total);
+      if (returnToStart) {
+        const backDistance = distanceGraph.get(current)?.get("0");
+        if (backDistance !== undefined) {
+          best = Math.min(best, total + backDistance);
+        }
+      } else {
+        best = Math.min(best, total);
+      }
       return;
     }
 
@@ -127,3 +134,4 @@ function findShortestPath(input: string) {
 }
 
 console.log("Part 1:", findShortestPath(input));
+console.log("Part 2:", findShortestPath(input, true));
