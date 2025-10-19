@@ -11,4 +11,16 @@ function getSum(input: string) {
   return sum;
 }
 
+function getSumHalfwayAround(input: string) {
+  const firstHalf = input.slice(0, input.length / 2);
+  const secondHalf = input.slice(input.length / 2);
+  let sum = 0;
+  for (let i = 0; i < firstHalf.length; i++) {
+    if (firstHalf[i] !== secondHalf[i]) continue;
+    sum += Number(firstHalf[i]) * 2;
+  }
+  return sum;
+}
+
 console.log("Part 1:", getSum(input));
+console.log("Part 2:", getSumHalfwayAround(input));
