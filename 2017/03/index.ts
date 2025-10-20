@@ -25,4 +25,42 @@ function findShortestPath(number: number) {
   return ring + Math.abs(number - nearest);
 }
 
+function firstValueLargerThan(number: number) {
+  const grid = new Map();
+  const key = (x: number, y: number) => `${x},${y}`;
+
+  grid.set(key(0, 0), 1);
+
+  let [x, y] = [0, 0];
+  const dirs = [
+    [1, 0],
+    [0, 1],
+    [-1, 0],
+    [0, -1],
+  ];
+
+  let stepSize = 1;
+  while (true) {
+    for (let d = 0; d < 4; d++) {
+      for (let s = 0; s < stepSize; s++) {
+        x += dirs[d][0];
+        y += dirs[d][1];
+
+        let sum = 0;
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            if (dx === 0 && dy === 0) continue;
+            sum += grid.get(key(x + dx, y + dy)) || 0;
+          }
+        }
+
+        grid.set(key(x, y), sum);
+        if (sum > number) return sum;
+      }
+      if (d === 1 || d === 3) stepSize++;
+    }
+  }
+}
+
 console.log("Part 1:", findShortestPath(number));
+console.log("Part 2:", firstValueLargerThan(number));
