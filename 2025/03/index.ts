@@ -22,4 +22,31 @@ function partOne(banks: string[][]): number {
   return total;
 }
 
+function partTwo(banks: string[][]): number {
+  let total = 0;
+
+  for (const bank of banks) {
+    const digits = bank.map(Number);
+    const keep = 12;
+    const stack: number[] = [];
+    let canRemove = digits.length - keep;
+
+    for (const d of digits) {
+      while (stack.length && canRemove > 0 && stack[stack.length - 1] < d) {
+        stack.pop();
+        canRemove--;
+      }
+      stack.push(d);
+    }
+
+    const selected = stack.slice(0, keep);
+
+    const numberVal = Number(selected.join(""));
+    total += numberVal;
+  }
+
+  return total;
+}
+
 console.log("Part 1:", partOne(batteryBanks));
+console.log("Part 2:", partTwo(batteryBanks));
