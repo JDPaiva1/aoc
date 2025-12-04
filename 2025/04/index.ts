@@ -42,13 +42,33 @@ function partOne(diagram: string[][]) {
         continue;
       }
 
-      // diagram[row][col] = "x";
+      diagram[row][col] = "x";
       count++;
     }
   }
   return count;
 }
 
+function partTwo(diagram: string[][]) {
+  let totalRemoved = 0;
+  const map = [...diagram];
+  while (true) {
+    const temp = partOne(map);
+    if (temp === 0) {
+      break;
+    }
+    map.forEach((row, i) =>
+      row.forEach((cell, j) => {
+        if (cell !== "x") return;
+        map[i][j] = ".";
+      }),
+    );
+    totalRemoved += temp;
+  }
+  return totalRemoved;
+}
+
 // console.table(diagram);
-console.log("Part 1:", partOne(diagram));
+console.log("Part 1:", partOne([...diagram]));
+console.log("Part 2:", partTwo(diagram));
 // console.table(diagram);
