@@ -30,4 +30,26 @@ function partOne(input: string[]): number {
   return totalFresh;
 }
 
+function partTwo(input: string[]): number {
+  const [ranges] = parseRanges(input);
+  ranges.sort((a, b) => a[0] - b[0]);
+
+  const merged: [number, number][] = [];
+  for (const [start, end] of ranges) {
+    if (!merged.length) {
+      merged.push([start, end]);
+      continue;
+    }
+    const last = merged[merged.length - 1];
+    if (start <= last[1] + 1) {
+      last[1] = Math.max(last[1], end);
+      continue;
+    }
+    merged.push([start, end]);
+  }
+
+  return merged.reduce((sum, [s, e]) => sum + (e - s + 1), 0);
+}
+
 console.log("Part 1", partOne(input));
+console.log("Part 2", partTwo(input));
