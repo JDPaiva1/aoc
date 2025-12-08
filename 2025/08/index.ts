@@ -5,15 +5,14 @@ const input = readFileSync("./2025/08/input.txt", "utf8")
   .split("\n")
   .map((line) => line.split(",").map(Number));
 
-function partOne(input: number[][], maxConnections = 1000): number {
-  const n = input.length;
+type Edge = { a: number; b: number; dist: number };
 
-  const edges: { a: number; b: number; dist: number }[] = [];
-
-  for (let i = 0; i < n; i++) {
-    const [x1, y1, z1] = input[i];
-    for (let j = i + 1; j < n; j++) {
-      const [x2, y2, z2] = input[j];
+function buildSortedEdges(points: number[][]): Edge[] {
+  const edges: Edge[] = [];
+  for (let i = 0; i < points.length; i++) {
+    const [x1, y1, z1] = points[i];
+    for (let j = i + 1; j < points.length; j++) {
+      const [x2, y2, z2] = points[j];
       const dx = x1 - x2;
       const dy = y1 - y2;
       const dz = z1 - z2;
@@ -21,11 +20,18 @@ function partOne(input: number[][], maxConnections = 1000): number {
       edges.push({ a: i, b: j, dist });
     }
   }
+  edges.sort((a, b) => {
+    if (a.dist !== b.dist) return a.dist - b.dist;
+    if (a.a !== b.a) return a.a - b.a;
+    return a.b - b.b;
+  });
+  return edges;
+}
 
-  edges.sort((a, b) => a.dist - b.dist);
-
+function createUnionFind(n: number) {
   const parent = Array.from({ length: n }, (_, idx) => idx);
   const size = new Array<number>(n).fill(1);
+  let components = n;
 
   const find = (x: number): number => {
     let node = x;
@@ -36,26 +42,42 @@ function partOne(input: number[][], maxConnections = 1000): number {
     return node;
   };
 
-  const union = (a: number, b: number): void => {
+  const union = (a: number, b: number): boolean => {
     let rootA = find(a);
     let rootB = find(b);
-    if (rootA === rootB) return;
+    if (rootA === rootB) return false;
     if (size[rootA] < size[rootB]) {
       [rootA, rootB] = [rootB, rootA];
     }
     parent[rootB] = rootA;
     size[rootA] += size[rootB];
+    components -= 1;
+    return true;
   };
+
+  const getSizeOfRoot = (root: number): number => size[root];
+
+  const getComponents = (): number => components;
+
+  return { find, union, getSizeOfRoot, getComponents };
+}
+
+function partOne(input: number[][], maxConnections = 1000): number {
+  const n = input.length;
+  if (n === 0) return 0;
+
+  const edges = buildSortedEdges(input);
+  const uf = createUnionFind(n);
 
   for (let i = 0; i < maxConnections; i++) {
     const { a, b } = edges[i];
-    union(a, b);
+    uf.union(a, b);
   }
 
   const componentSizes = new Map<number, number>();
   for (let i = 0; i < n; i++) {
-    const root = find(i);
-    componentSizes.set(root, size[root]);
+    const root = uf.find(i);
+    componentSizes.set(root, uf.getSizeOfRoot(root));
   }
 
   const sortedSizes = Array.from(componentSizes.values()).sort((a, b) => b - a);
@@ -66,4 +88,23 @@ function partOne(input: number[][], maxConnections = 1000): number {
   return sortedSizes.slice(0, 3).reduce((product, value) => product * value, 1);
 }
 
+function partTwo(input: number[][]): number {
+  const n = input.length;
+  if (n < 2) return 0;
+
+  const edges = buildSortedEdges(input);
+  const uf = createUnionFind(n);
+
+  for (const { a, b } of edges) {
+    if (uf.union(a, b) && uf.getComponents() === 1) {
+      const x1 = input[a][0];
+      const x2 = input[b][0];
+      return x1 * x2;
+    }
+  }
+
+  return 0;
+}
+
 console.log("Part 1:", partOne(input));
+console.log("Part 2:", partTwo(input));
